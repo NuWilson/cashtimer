@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cash Timer</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Cash Timer</h1>
+        <p class="subtitle">Track live earnings while you work.</p>
+      </header>
+
+      <section class="card">
+        <label class="field">
+          <span>Hourly wage</span>
+          <div class="input-row">
+            <span class="prefix">$</span>
+            <input id="wage" type="number" min="0" step="0.01" placeholder="25.00" />
+          </div>
+        </label>
+
+        <div class="stats">
+          <div>
+            <span class="label">Elapsed</span>
+            <span id="elapsed" class="value">00:00:00</span>
+          </div>
+          <div>
+            <span class="label">Earned</span>
+            <span id="earned" class="value">$0.00</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="start" class="primary">Start</button>
+          <button id="stop">Pause</button>
+          <button id="reset" class="ghost">Reset</button>
+        </div>
+      </section>
+
+      <p class="hint">Leave the popup open to watch the live ticker.</p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

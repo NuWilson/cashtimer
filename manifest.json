@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Cash Timer",
+  "version": "1.0.0",
+  "description": "Track live earnings based on your hourly wage.",
+  "action": {
+    "default_title": "Cash Timer",
+    "default_popup": "popup.html"
+  }
+}
