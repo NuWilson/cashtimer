@@ -45,6 +45,19 @@ h1 {
   color: #4c556a;
 }
 
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #4c556a;
+}
+
+.toggle input {
+  margin: 0;
+}
+
 .input-row {
   display: flex;
   align-items: center;

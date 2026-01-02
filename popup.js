@@ -4,15 +4,18 @@ const earnedEl = document.getElementById("earned");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const resetButton = document.getElementById("reset");
+const showGbpToggle = document.getElementById("show-gbp");
 
 const STORAGE_KEY = "cashTimerState";
+const GBP_EXCHANGE_RATE = 0.75;
 let ticker = null;
 
 const defaultState = {
   hourlyWage: 0,
   accumulatedMs: 0,
   startTimestamp: null,
-  isRunning: false
+  isRunning: false,
+  showGbp: false
 };
 
 const loadState = () => {
@@ -41,22 +44,28 @@ const formatElapsed = (totalMs) => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
-const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
+const formatCurrency = (amount, currencySymbol) =>
+  `${currencySymbol}${amount.toFixed(2)}`;
 
 const calculateStateTotals = (state) => {
   const liveMs = state.isRunning && state.startTimestamp
     ? Date.now() - state.startTimestamp
     : 0;
   const totalMs = state.accumulatedMs + liveMs;
-  const earned = (state.hourlyWage / 3600) * (totalMs / 1000);
-  return { totalMs, earned };
+  const earnedUsd = (state.hourlyWage / 3600) * (totalMs / 1000);
+  const earned = state.showGbp ? earnedUsd * GBP_EXCHANGE_RATE : earnedUsd;
+  const currencySymbol = state.showGbp ? "£" : "$";
+  return { totalMs, earned, currencySymbol };
 };
 
 const updateUI = (state) => {
-  const { totalMs, earned } = calculateStateTotals(state);
+  const { totalMs, earned, currencySymbol } = calculateStateTotals(state);
   elapsedEl.textContent = formatElapsed(totalMs);
-  earnedEl.textContent = formatCurrency(earned);
-  wageInput.value = state.hourlyWage ? state.hourlyWage.toFixed(2) : "";
+  earnedEl.textContent = formatCurrency(earned, currencySymbol);
+  if (document.activeElement !== wageInput) {
+    wageInput.value = state.hourlyWage ? state.hourlyWage.toFixed(2) : "";
+  }
+  showGbpToggle.checked = state.showGbp;
 
   startButton.disabled = state.isRunning || state.hourlyWage <= 0;
   stopButton.disabled = !state.isRunning;
@@ -87,6 +96,12 @@ wageInput.addEventListener("input", (event) => {
   updateUI(state);
 });
 
+showGbpToggle.addEventListener("change", (event) => {
+  state.showGbp = event.target.checked;
+  saveState(state);
+  updateUI(state);
+});
+
 startButton.addEventListener("click", () => {
   if (state.isRunning || state.hourlyWage <= 0) {
     return;
@@ -109,7 +124,11 @@ stopButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-  state = { ...defaultState, hourlyWage: state.hourlyWage };
+  state = {
+    ...defaultState,
+    hourlyWage: state.hourlyWage,
+    showGbp: state.showGbp
+  };
   saveState(state);
   updateUI(state);
   stopTicker();
